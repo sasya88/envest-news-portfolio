@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Link from "next/link";
+import Image from "next/image";
 
 interface NewsItem {
   title: string;
@@ -19,21 +21,12 @@ export default function Home() {
   const [linked, setLinked] = useState(false);
   const [filteredNews, setFilteredNews] = useState<NewsItem[]>([]);
   const [bookmarks, setBookmarks] = useState<NewsItem[]>([]);
-  const [darkMode, setDarkMode] = useState(true);
   const [sentimentMap, setSentimentMap] = useState<
     Record<string, SentimentData>
   >({});
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark =
-      savedTheme === "dark" ||
-      (!savedTheme &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-    setDarkMode(prefersDark);
-    document.documentElement.classList.toggle("dark", prefersDark);
-
     const saved = localStorage.getItem("bookmarkedNews");
     if (saved) setBookmarks(JSON.parse(saved));
 
@@ -140,8 +133,8 @@ export default function Home() {
     return "🟡";
   };
   const getConfidence = (score: number) => {
-    const capped = Math.min(Math.abs(score), 5); // Cap extreme values
-    return Math.round((capped / 5) * 100); // Convert to %
+    const capped = Math.min(Math.abs(score), 5);
+    return Math.round((capped / 5) * 100);
   };
 
   const NewsCard = ({
@@ -180,8 +173,6 @@ export default function Home() {
                   <span className="font-medium">{sentiment.sentiment}</span>{" "}
                   (Score: {sentiment.score.toFixed(2)})
                 </div>
-
-                {/* Confidence bar */}
                 <div className="w-full bg-gray-300 dark:bg-gray-700 h-2 rounded overflow-hidden">
                   <div
                     className={`h-full transition-all duration-500 ${
@@ -194,7 +185,6 @@ export default function Home() {
                     style={{ width: `${getConfidence(sentiment.score)}%` }}
                   />
                 </div>
-
                 <div className="text-xs text-gray-500 dark:text-gray-400">
                   Confidence: {getConfidence(sentiment.score)}%
                 </div>
@@ -225,15 +215,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white font-sans">
-      {/* Navbar */}
       <nav className="bg-gray-200 dark:bg-gray-900 px-6 py-4 flex justify-between items-center sticky top-0 z-50 shadow">
-        <a
+        <Link
           href="/"
           className="flex items-center gap-2 text-2xl font-bold text-black dark:text-white"
         >
-          <img src="/file.svg" alt="logo" className="w-6 h-6" />
+          <Image src="/file.svg" alt="logo" width={24} height={24} />
           Envest News
-        </a>
+        </Link>
         <ul className="flex gap-4 text-blue-700 dark:text-blue-300 font-medium">
           <li>
             <a href="#portfolio" className="hover:underline">
@@ -251,7 +240,6 @@ export default function Home() {
             </a>
           </li>
         </ul>
-
         <div className="flex items-center gap-3">
           <button
             onClick={toggleNotifications}
@@ -267,7 +255,6 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Welcome */}
       <section className="px-6 py-8 max-w-4xl mx-auto text-center">
         <h2 className="text-3xl font-bold mb-2">Welcome to Envest News! 📊</h2>
         <p className="text-gray-600 dark:text-gray-400">
@@ -278,7 +265,6 @@ export default function Home() {
         </p>
       </section>
 
-      {/* Portfolio */}
       <section
         id="portfolio"
         className="px-6 py-10 max-w-4xl mx-auto border-b border-gray-300 dark:border-gray-700"
@@ -324,7 +310,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* Bookmarks */}
       <section
         id="bookmarks"
         className="px-6 py-10 max-w-4xl mx-auto border-b border-gray-300 dark:border-gray-700"
@@ -348,7 +333,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* General News */}
       <section id="news" className="px-6 py-10 max-w-4xl mx-auto">
         <h2 className="text-2xl font-semibold mb-6">📰 General Market News</h2>
         <div className="space-y-4">
